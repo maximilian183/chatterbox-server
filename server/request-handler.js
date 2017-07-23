@@ -35,6 +35,30 @@ var requestHandler = function(request, response) {
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
+  var objectRet = {
+    results: [
+      {"createdAt": "2017-07-22T23:22:33.233Z",
+        "objectId": "yWVdrw8COy",
+        "updatedAt": "2017-07-22T23:22:33.233Z"},
+      {"createdAt": "2017-07-22T23:20:08.605Z",
+        "objectId": "hlEBbeCmVU",
+        "updatedAt": "2017-07-22T23:20:08.605Z"},
+      {"createdAt": "2017-07-22T23:19:51.731Z",
+        "objectId": "VT2ehP8Anz",
+        "roomname": "allRooms",
+        "text": "do you Suh",
+        "updatedAt": "2017-07-22T23:19:51.731Z",
+        "username": "anonymous"}
+    ]
+  };
+
+  if(request.method === "POST") {
+    request.on('data', function (data) {
+      console.log("Partial body: " + data);
+    });
+    statusCode = 201;
+  }
+
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
@@ -45,6 +69,9 @@ var requestHandler = function(request, response) {
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
 
+
+
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -52,7 +79,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(JSON.stringify(objectRet));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -67,7 +94,29 @@ var requestHandler = function(request, response) {
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
+  'access-control-allow-headers': 'Access-Control-Allow-Origin, Access-Control-Allow-Headers, Origin, X-Requested-With,Content-Type, Accept',
   'access-control-max-age': 10 // Seconds.
 };
 
+exports.requestHandler = requestHandler;
+
+
+/*
+var ObjectRet = {
+  results: [
+      {"createdAt": "2017-07-22T23:22:33.233Z",
+        "objectId": "yWVdrw8COy",
+        "updatedAt": "2017-07-22T23:22:33.233Z"},
+      {"createdAt": "2017-07-22T23:20:08.605Z",
+        "objectId": "hlEBbeCmVU",
+        "updatedAt": "2017-07-22T23:20:08.605Z"},
+      {"createdAt": "2017-07-22T23:19:51.731Z",
+        "objectId": "VT2ehP8Anz",
+        "roomname": "allRooms",
+        "text": "do you Suh",
+        "updatedAt": "2017-07-22T23:19:51.731Z",
+        "username": "anonymous"}
+  ]
+}
+
+*/
