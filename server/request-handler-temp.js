@@ -11,17 +11,17 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-// Modules
-const objectFormatter = require('./object-formatter.js');
-const dataCrud = require('./data-crud.js');
-// Module output *** data-crud
 
-const objectRetx = dataCrud.objectRetx;
-const writeData = dataCrud.writeData;
-// Module output *** objectFormatter
-const createObj = objectFormatter.createObj;
-
-const defaultCorsHeaders = {
+// These headers will allow Cross-Origin Resource Sharing (CORS).
+// This code allows this server to talk to websites that
+// are on different domains, for instance, your chat client.
+//
+// Your chat client is running from a url like file://your/chat/client/index.html,
+// which is considered a different domain.
+//
+// Another way to get around this restriction is to serve you chat
+// client from this domain by setting up static file serving.
+var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'access-control-allow-headers': 'Access-Control-Allow-Origin, Access-Control-Allow-Headers, Origin, X-Requested-With,Content-Type, Accept',
@@ -29,8 +29,6 @@ const defaultCorsHeaders = {
 };
 
 var requestHandler = function(request, response) {
-
-
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -47,39 +45,22 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
+  let body = [];
+
+  var objectRet = {
+    results: [
+      // {"createdAt": "2017-07-22T23:19:51.731Z",
+      //   "objectId": "VT2ehP8Anz",
+      //   "roomname": "allRooms",
+      //   "text": "do you Suh",
+      //   "updatedAt": "2017-07-22T23:19:51.731Z",
+      //   "username": "anonymous"}
+    ]
+  };
   if (request.url === '/classes/messages') {
-    if (request.method === 'GET' || request.method === 'OPTIONS') {
-      var headers = defaultCorsHeaders;
-      headers['Content-Type'] = 'text/plain';
-
-      response.writeHead(200, headers);
-
-      // response.end(JSON.stringify(objectRet) + 'hello');
-      response.end(JSON.stringify(objectRet));
-    } else if (request.method === 'POST') {
+    if (request.method === 'GET') {
       // See the note below about CORS headers.
       var headers = defaultCorsHeaders;
-      let body = [];
-
-      request.on('data', function (data) {
-        //From client data form is ${url}?username=Max&text=testing&roomname=Bob
-        try {
-          writeData(JSON.parse(data));
-          body.push(JSON.parse(data));
-        } catch (e) {
-          data = data.toString();
-          if (data.indexOf('{') >= 0) {
-            writeData(JSON.parse(data));
-          } else {
-            data = 'Data: ' + data;
-            writeData(createObj(data));
-          }
-        }
-      });
-
-      request.on('end', () => {
-        objectRet.results = [{username: 'Jono', text: 'Do my bidding!'}];
-      });
 
       // Tell the client we are sending them plain text.
       //
@@ -89,40 +70,71 @@ var requestHandler = function(request, response) {
 
       // .writeHead() writes to the request line and headers of the response,
       // which includes the status and all headers.
-      response.writeHead(201, headers);
+
       // Make sure to always call response.end() - Node may not send
       // anything back to the client until you do. The string you pass to
       // response.end() will be the body of the response - i.e. what shows
       // up in the browser.
       //
-      // Calling .end 'flushes' the response's internal buffer, forcing
+      // Calling .end "flushes" the response's internal buffer, forcing
       // node to actually send all the data over to the client.
-      response.end();
-    } // END POST CONDITIONAL
+
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(objectRet));
+    } else if (request.method === 'POST') {
+      // The outgoing status.
+      var statusCode = 201;
+
+      var postedData = '';
+
+      // See the note below about CORS headers.
+      var headers = defaultCorsHeaders;
+
+      request.on('data', (chunk) => {
+        postedData += chunk;
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        objectRet.results.push(JSON.parse(postedData));
+        // your code here if you want to use the results !
+      });
+
+      response.writeHead(statusCode, headers);
+
+      response.end(JSON.stringify(objectRet));
+    }
   } else if (request.url === '/classes/room') {
     var headers = defaultCorsHeaders;
     headers['Content-Type'] = 'text/plain';
     response.writeHead(200, headers);
-    response.end();
+    response.end('Hello World');
   } else {
     var headers = defaultCorsHeaders;
     headers['Content-Type'] = 'text/plain';
     response.writeHead(404, headers);
-    response.end();
+    response.end('Hello World');
   }
-
-
 };
 
-// These headers will allow Cross-Origin Resource Sharing (CORS).
-// This code allows this server to talk to websites that
-// are on different domains, for instance, your chat client.
-//
-// Your chat client is running from a url like file://your/chat/client/index.html,
-// which is considered a different domain.
-//
-// Another way to get around this restriction is to serve you chat
-// client from this domain by setting up static file serving.
-
-
 exports.requestHandler = requestHandler;
+
+
+/*
+var ObjectRet = {
+  results: [
+      {"createdAt": "2017-07-22T23:22:33.233Z",
+        "objectId": "yWVdrw8COy",
+        "updatedAt": "2017-07-22T23:22:33.233Z"},
+      {"createdAt": "2017-07-22T23:20:08.605Z",
+        "objectId": "hlEBbeCmVU",
+        "updatedAt": "2017-07-22T23:20:08.605Z"},
+      {"createdAt": "2017-07-22T23:19:51.731Z",
+        "objectId": "VT2ehP8Anz",
+        "roomname": "allRooms",
+        "text": "do you Suh",
+        "updatedAt": "2017-07-22T23:19:51.731Z",
+        "username": "anonymous"}
+  ]
+}
+
+*/

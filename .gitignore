@@ -11,6 +11,9 @@ Icon
 .Spotlight-V100
 .Trashes
 
+chatData.json
+
+client/
 
 ### Node ###
 lib-cov
@@ -34,7 +37,7 @@ node_modules
 
 ### Bower ###
 **/bower_components/
-/client
+
 
 ### PhPStorm ###
 .idea/

@@ -31,6 +31,8 @@
     ]
   },
   "dependencies": {
+    "jsonfile": "^3.0.1",
+    "moment": "^2.18.1",
     "underscore": "^1.8.3"
   }
 }
