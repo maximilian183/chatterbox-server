@@ -14,6 +14,7 @@ this file and include it in basic-server.js so that it actually works.
 // Modules
 const objectFormatter = require('./object-formatter.js');
 const dataCrud = require('./data-crud.js');
+const path = require('path');
 // Module output *** data-crud
 
 const objectRetx = dataCrud.objectRetx;
@@ -110,8 +111,6 @@ var requestHandler = function(request, response) {
     response.writeHead(404, headers);
     response.end();
   }
-
-
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -124,5 +123,33 @@ var requestHandler = function(request, response) {
 // Another way to get around this restriction is to serve you chat
 // client from this domain by setting up static file serving.
 
+var getMessageHandler = function(request, response) {
+  response.send(JSON.stringify(objectRet));
+}
 
+var postMessageHandler = function(request, response) {
+  var headers = defaultCorsHeaders;
+  let body = [];
+
+  request.on('data', function (data) {
+    data = data.toString();
+    if (data.indexOf('{') >= 0) {
+      writeData(JSON.parse(data));
+    } else {
+      data = 'Data: ' + data;
+      writeData(createObj(data));
+    }
+  });
+
+  request.on('end', () => {
+    objectRet.results = [{username: 'Jono', text: 'Do my bidding!'}];
+  });
+
+  headers['Content-Type'] = 'text/plain';
+  response.writeHead(201, headers);
+  response.end();
+}
+
+exports.getMessageHandler = getMessageHandler;
+exports.postMessageHandler = postMessageHandler;
 exports.requestHandler = requestHandler;

@@ -1,8 +1,7 @@
 const moment = require('moment');
 
 const createObj = (data)=> {
-	console.log(typeof data, " = ", data);
-
+  
   var result = {};
   data = data.replace('Data: ', '');
 

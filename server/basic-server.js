@@ -2,6 +2,9 @@
 var http = require('http');
 var handleRequest = require('./request-handler.js');
 
+const express = require('express');
+const app = express();
+const path = require('path');
 
 // Every server needs to listen on a port with a unique number. The
 // standard port for HTTP servers is port 80, but that port is
@@ -23,9 +26,20 @@ var ip = '127.0.0.1';
 // incoming requests.
 //
 // After creating the server, we will tell it to listen on the given port and IP. */
-var server = http.createServer(handleRequest.requestHandler);
-console.log('Listening on http://' + ip + ':' + port);
-server.listen(port, ip);
+// console.log('Listening on http://' + ip + ':' + port);
+
+// var server = http.createServer(handleRequest.requestHandler);
+// server.listen(port, ip);
+
+app.listen(3000, function() {
+  console.log('Listening on 3000 via Express!');
+});
+
+app.route('/classes/messages')
+  .get(handleRequest.getMessageHandler)
+  .post(handleRequest.postMessageHandler);
+
+app.use('/',express.static(path.join(__dirname,'../client')));
 
 // To start this server, run:
 //
