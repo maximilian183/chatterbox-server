@@ -39,8 +39,8 @@ app.route('/classes/messages')
   .get(handleRequest.getMessageHandler)
   .post(handleRequest.postMessageHandler);
 
-app.use('/',express.static(path.join(__dirname,'../client')));
-
+// app.use('/', express.static(path.join(__dirname, '../client')));
+app.use('/', express.static(path.join(__dirname, '../myClient')));
 // To start this server, run:
 //
 //   node basic-server.js

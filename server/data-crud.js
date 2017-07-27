@@ -13,7 +13,7 @@ const objectRetx = () => {
 
   rl.on('line', (line)=> { dataArr.unshift(JSON.parse(line)); });
 
-  var sendResults = ()=> { objectRet = {'results': dataArr } };
+  var sendResults = ()=> { objectRet = {'results': dataArr }; };
   sendResults();
   setTimeout(sendResults, 10);
 };

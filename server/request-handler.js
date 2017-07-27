@@ -125,7 +125,7 @@ var requestHandler = function(request, response) {
 
 var getMessageHandler = function(request, response) {
   response.send(JSON.stringify(objectRet));
-}
+};
 
 var postMessageHandler = function(request, response) {
   var headers = defaultCorsHeaders;
@@ -148,7 +148,7 @@ var postMessageHandler = function(request, response) {
   headers['Content-Type'] = 'text/plain';
   response.writeHead(201, headers);
   response.end();
-}
+};
 
 exports.getMessageHandler = getMessageHandler;
 exports.postMessageHandler = postMessageHandler;
